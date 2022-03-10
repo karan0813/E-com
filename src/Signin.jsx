@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { auth } from './firebase'
 
 const Signin = () => {
+    const [open, setopen] = useState(false)
     const history = useHistory()
     const [email, setemail] = useState("")
     const [password, setpassword] = useState("")
@@ -14,7 +15,7 @@ const Signin = () => {
             history.push("/home")
         }).catch(error => { alert(error.message) })
     }
-    const register = (e) => {
+    const signin = (e) => {
         e.preventDefault();
         auth.createUserWithEmailAndPassword(email, password).then(authuser => {
             if (authuser) {
@@ -23,21 +24,24 @@ const Signin = () => {
         }).catch(err => { alert(err.message) })
     }
     return (
-        <>
+        <div className="w-full h-screen card flex items-center justify-center flex-col">
 
-            <div className=" w-screen login h-screen text-center">
-                <h1 className="mb-5 font-bold text-2xl">Sign-In</h1>
-                <div className=' lg:w-1/4 md:w-1/2 w-60  mx-auto p-5 space-y-6 border-black border'>
-                    <input value={email} onChange={(e) => (setemail(e.target.value))} className="w-full px-5 py-2 rounded-lg" type="email" placeholder='Enter email' />
-                    <input value={password} onChange={(e) => (setpassword(e.target.value))} className="w-full px-5 py-2 rounded-lg" type="password" placeholder='Enter password' />
-                    <div>
-                        <button className="  px-7 py-1 border rounded-lg login_button  mb-2 w-full  font-bold text-gray-900" onClick={login}>Login</button>
-                        <button className="  px-7 py-1 border rounded-lg login_button w-full font-bold text-gray-900 " onClick={register}>Registar</button>
-                    </div>
+            <div className={`flex flex-col p-5 space-y-4 w-80  ${!open ? "h-80" : "h-96"} rounded-lg bg-white`}>
+                <h1 className="text-xl text-black font-bold">{open ? "Sign-Up" : "Login"}</h1>
+                {open && <input className="py-3 border-b border-gray-700 outline-none" type="text" placeholder="Name" />}
+                <input className="py-3 border-b border-gray-700 outline-none px-3 bg-white" type="email" value={email} onChange={(e) => (setemail(e.target.value))} placeholder='Email' />
+                <input className="py-3 border-b border-gray-700 outline-none px-3 bg-white" type="password" value={password} onChange={(e) => (setpassword(e.target.value))} placeholder="password" />
+                {open && <button className="bg-red-400 px-4 py-1 card  " onClick={signin}>Sign-Up</button>}
+                {!open && <button className="bg-red-400 px-4 py-1 card  " onClick={login}>Login</button>}
+
+                <div className=" text-center">
+                    {!open && <p className=" text-xs">Need an Account ?<span className=" text-sm underline" onClick={() => (setopen(true))}>SIGN UP</span></p>}
+                    {open && <p className=" text-xs"> Have an Account ?<span className=" text-sm underline" onClick={() => (setopen(false))}>Login</span></p>}
 
                 </div>
             </div>
-        </>
+
+        </div>
     )
 }
 
